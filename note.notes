@@ -27,7 +27,7 @@ TASK THESIS:
     ///////
     The overlap between a 2D lidar and an RGB image would be a line of pixels.
 
-    If you have a feature detection in the RGB image that corresponds with that overlap, 
+    If you have a feature detection in the RGB image that corresponds with that overlap, k
     then yes, its presumably possible to use the LIDAR information to fuse or 
     register the detection with the pointcloud or scan.
 
@@ -78,9 +78,6 @@ n1 (102.874) = [103.387,103.169,105.863,102.515,102.515,103.609,102.517,102.302,
 [4] 250
 [5] 300
 [6] 350
-
-Output LiDAR raw:
-[[15, 25.453125, 825.75], [15,26.8125,813.75],[15,28.078125,819.75]]
 
 LiDAR real world potition:
 h_LiDAR = 10.5 cm
