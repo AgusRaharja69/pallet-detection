@@ -20,7 +20,7 @@ objp = objp * size_of_chessboard_squares_mm
 objpoints = [] # 3d point in real world space
 imgpoints = [] # 2d points in image plane.
 
-images = glob.glob('*.jpg')
+images = glob.glob('calli_dfov/*.jpg')
 
 for image in images:
     img = cv.imread(image)
@@ -47,7 +47,7 @@ cv.destroyAllWindows()
 ret, cameraMatrix, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, frameSize, None, None)
 
 ############## UNDISTORTION #####################################################
-img = cv.imread('saved_img_2.jpg')
+img = cv.imread('calli_dfov/saved_img_5.jpg')
 h,  w = img.shape[:2]
 newCameraMatrix, roi = cv.getOptimalNewCameraMatrix(cameraMatrix, dist, (w,h), 1, (w,h))
 
@@ -57,7 +57,7 @@ dst = cv.undistort(img, cameraMatrix, dist, None, newCameraMatrix)
 # crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv.imwrite('result_saved_img_2.jpg', dst)
+cv.imwrite('calli_dfov/result_saved_img_5.jpg', dst)
 
 # Undistort with Remapping
 mapx, mapy = cv.initUndistortRectifyMap(cameraMatrix, dist, None, newCameraMatrix, (w,h), 5)
@@ -66,7 +66,7 @@ dst = cv.remap(img, mapx, mapy, cv.INTER_LINEAR)
 # crop the image
 x, y, w, h = roi
 dst = dst[y:y+h, x:x+w]
-cv.imwrite('result_saved_img_2_2.jpg', dst)
+cv.imwrite('calli_dfov/result_saved_img_5_2.jpg', dst)
 
 # Reprojection Error
 mean_error = 0

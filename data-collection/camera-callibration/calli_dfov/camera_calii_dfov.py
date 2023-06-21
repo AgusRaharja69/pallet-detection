@@ -3,8 +3,8 @@ import numpy as np
 
 # Load the images of the checkerboard
 images = []
-for i in range(3):
-    image = cv2.imread("saved_img_{}.jpg".format(i))
+for i in range(4):
+    image = cv2.imread("saved_img_{}.jpg".format(i+5))
     images.append(image)
 
 # Define the size of the checkerboard pattern
@@ -53,24 +53,24 @@ print(translation_matrices)
 
 
 
-import numpy as np
-import cv2
+# import numpy as np
+# import cv2
 
-# Collect data from both sensors
-camera_images = []  # replace with actual camera images
+# # Collect data from both sensors
+# camera_images = []  # replace with actual camera images
 
-# Camera calibration
-chessboard_size = (9, 6)
-objp = np.zeros((chessboard_size[0] * chessboard_size[1], 3), np.float32)
-objp[:,:2] = np.mgrid[0:chessboard_size[0], 0:chessboard_size[1]].T.reshape(-1,2)
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([objp], camera_images, (640, 480), None, None)
+# # Camera calibration
+# chessboard_size = (9, 6)
+# objp = np.zeros((chessboard_size[0] * chessboard_size[1], 3), np.float32)
+# objp[:,:2] = np.mgrid[0:chessboard_size[0], 0:chessboard_size[1]].T.reshape(-1,2)
+# ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera([objp], camera_images, (640, 480), None, None)
 
-# Compute camera matrix from diagonal field of view
-diagonal_fov = 55.0  # degrees
-fx = fy = (640 / 2) / np.tan(np.radians(diagonal_fov / 2))
-K = np.array([[fx, 0, 640 / 2], [0, fy, 480 / 2], [0, 0, 1]])
+# # Compute camera matrix from diagonal field of view
+# diagonal_fov = 55.0  # degrees
+# fx = fy = (640 / 2) / np.tan(np.radians(diagonal_fov / 2))
+# K = np.array([[fx, 0, 640 / 2], [0, fy, 480 / 2], [0, 0, 1]])
 
-print(k)
+# print(k)
 
 # # Hand-eye calibration
 # poses_lidar = []  # replace with actual lidar poses
