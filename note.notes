@@ -1,28 +1,6 @@
 TASK THESIS:
 1.  Method 1, Record data
-2.  Method 2, Hitung angle camera dengan LiDAR, Record data
-    ///////
-    Say you are using RGB camera and have set it to 720p resolution. W = 1280, H = 720
-    Assume the HFOV = 62 and VFOV=46 (Check values for your camera, assumed at random)
-    Center of camera in image = (W/2,H/2) = (640,360)
-
-    Horizontal Angle of say random pixel (x,y) = ((x - W/2)/(W/2))(HFOV/2)
-    Vertical Angle of say random pixel (x,y) = ((y - H/2)/(H/2))(VFOV/2)
-
-    For a random pixel say (320,180) it will be:
-    H Angle = ((320 - 640)/640)(62/2) = - 15.5 degree
-    H Angle = ((180 - 360)/360)(46/2) = - 11.5 degree
-
-    You can get the euclidean angle by using simple (h-angle^2+v-angle^2)^0.5
-
-    ///////
-    (1280x1024)
-    x,y=my_coordinates
-    angle_per_pix=my_cam_angle/1280
-    angle_vertical=(x-640)*angle_per_pix #-640 beacuse you want angle between middle of camera
-    angle_horizontal=(x-512)*angle_per_pix
-    ////////
-
+2.  Method 2, Record data
 3.  Method 3, Point cloud, setting posisi camera dengan point cloud LiDAR, Record Data
     ///////
     The overlap between a 2D lidar and an RGB image would be a line of pixels.
@@ -82,3 +60,97 @@ n1 (102.874) = [103.387,103.169,105.863,102.515,102.515,103.609,102.517,102.302,
 LiDAR real world potition:
 h_LiDAR = 10.5 cm
 h_camera = 14.5 cm
+
+########## 21/06/23 ##########
+kalibrasi :
+
+D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration>py camera_calli_img.py
+total error: 0.02285955187370706
+ Camera matrix:
+[[1.51524349e+03 0.00000000e+00 3.65908321e+02]
+ [0.00000000e+00 1.44932731e+03 3.27483973e+02]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+
+ Distortion coefficient:
+[[-2.32701187e-01  1.12870600e+01  2.71129011e-03  1.70226889e-02
+  -1.00357243e+02]]
+
+ Rotation Vector:
+[array([[ 0.08974448],
+       [-0.34889318],
+       [-0.00065488]]), array([[ 0.08929608],
+       [-0.3495648 ],
+       [-0.00070519]]), array([[ 0.08961902],
+       [-0.34925312],
+       [-0.00067873]])]
+
+ Rotation Matrix:
+[array([[ 0.93979196, -0.01484622, -0.34142446],
+       [-0.01612784,  0.99601612, -0.08770284],
+       [ 0.34136632,  0.08792886,  0.9358085 ]]), array([[ 0.93956187, -0.01474883, -0.34206135],
+       [-0.0161288 ,  0.99605592, -0.08724945],
+       [ 0.34199906,  0.0874933 ,  0.93561828]]), array([[ 0.93966881, -0.01481693, -0.34176453],
+       [-0.01614516,  0.99602731, -0.08757246],
+       [ 0.34170436,  0.08780695,  0.93569657]])]
+
+ Translation Vectors:
+[array([[-291.71344798],
+       [-390.74731084],
+       [2236.65797545]]), array([[-291.62871742],
+       [-390.67142717],
+       [2236.02927475]]), array([[-291.66729163],
+       [-390.67521205],
+       [2236.19909371]])]
+
+- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
+- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
+
+D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration\calli_dfov>py camera_calii_dfov.py
+ Camera matrix:
+[[521.72737903   0.         255.7938803 ]
+ [  0.         499.4948742  244.34969476]
+ [  0.           0.           1.        ]]
+
+ Distortion coefficient:
+[[-0.51126399  1.97807254 -0.06445     0.01816105 -3.60575746]]
+
+ Rotation Vectors:
+[array([[ 0.98869398, -0.00655296, -0.14980409],
+       [ 0.00221329,  0.99957355, -0.02911737],
+       [ 0.14993101,  0.02845661,  0.98828686]]), array([[ 0.98843084, -0.00636175, -0.15153876],
+       [ 0.00222148,  0.99962002, -0.0274752 ],
+       [ 0.15165597,  0.02682069,  0.98806939]]), array([[ 0.98865173, -0.00654364, -0.15008309],
+       [ 0.00236245,  0.99960455, -0.02802058],
+       [ 0.1502071 ,  0.02734803,  0.98827623]])]
+
+ Translation Vectors:
+[array([[-2.02784433],
+       [-4.01880505],
+       [12.10935136]]), array([[-2.02690942],
+       [-4.01881167],
+       [12.10776663]]), array([[-2.02775131],
+       [-4.02004806],
+       [12.11516881]])]
+
+D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration>py test_fusion.py
+camera_matrix:  [[1.57034678e+03 0.00000000e+00 3.75793671e+02]
+ [0.00000000e+00 1.49880818e+03 3.65519559e+02]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+rvecs:  [array([[ 0.08995302],
+       [-0.36658966],
+       [-0.00513899]])]
+tvecs:  [array([[-4.71874415],
+       [-6.94724055],
+       [35.31130224]])]
+rotation_matrix:  [[ 0.93358714 -0.01127525 -0.35817302]
+ [-0.02131085  0.995989   -0.0869009 ]
+ [ 0.35771622  0.08876254  0.92960224]]
+translation_vector:  [-0.47187442  3.52812558 -0.47187442]
+extrinsic_matrix:  [[ 0.93358714 -0.01127525 -0.35817302 -0.47187442]
+ [-0.02131085  0.995989   -0.0869009   3.52812558]
+ [ 0.35771622  0.08876254  0.92960224 -0.47187442]
+ [ 0.          0.          0.          1.        ]]
+camera_to_lidar:  [[ 0.93358714 -0.02131085  0.35771622  0.68452038]
+ [-0.01127525  0.995989    0.08876254 -3.47740999]
+ [-0.35817302 -0.0869009   0.92960224  0.57624013]
+ [ 0.          0.          0.          1.        ]]
