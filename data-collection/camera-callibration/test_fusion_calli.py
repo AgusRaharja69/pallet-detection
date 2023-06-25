@@ -24,7 +24,7 @@ imgpoints = []  # 2D points in the camera image coordinate system
 objp = np.zeros((chessboard_size[0] * chessboard_size[1], 3), np.float32)
 objp[:, :2] = np.mgrid[0:chessboard_size[0], 0:chessboard_size[1]].T.reshape(-1, 2)
 
-for i in range(1):
+for i in range(5):
     if ret==True:
         gray = cv2.cvtColor(chessboard, cv2.COLOR_BGR2GRAY)
         ret, corners = cv2.findChessboardCorners(gray, chessboard_size, None)
@@ -77,11 +77,11 @@ while True:
         print("points: ",points)
         img = cv2.drawContours(img, [np.array(points)], -1, (255, 0, 0), 2)
 
-    # Display the image
-    cv2.imshow('Fused Image', img)
-    if cv2.waitKey(1) == ord('q'):
-        break
+        # Display the image
+        cv2.imshow('Fused Image', img)
+        if cv2.waitKey(1) == ord('q'):
+            break
 
-cap.release()
-lidar.stop()
-cv2.destroyAllWindows()
+    cap.release()
+    lidar.stop()
+    cv2.destroyAllWindows()

@@ -8,7 +8,8 @@ while True:
         check, frame = webcam.read()
         # print(check) #prints true as long as the webcam is running
         # print(frame) #prints matrix values of each framecd 
-        # cv2.circle(frame,(int(frame.shape[1]/2),int(frame.shape[0]/2)), 5, (0,255,255), -1)
+        cv2.circle(frame,(320,240), 5, (0,255,255), -1)
+        
         cv2.imshow("Capturing", frame)
         
         key = cv2.waitKey(1)
@@ -17,6 +18,7 @@ while True:
             cv2.imwrite(filename=f"saved_img_{nb_files}.jpg", img=frame)
             # webcam.release()
             img_new = cv2.imread(f"saved_img_{nb_files}.jpg", cv2.IMREAD_GRAYSCALE)
+            
             img_new = cv2.imshow("Captured Image", img_new)
             cv2.waitKey(1650)
             # cv2.destroyAllWindows()

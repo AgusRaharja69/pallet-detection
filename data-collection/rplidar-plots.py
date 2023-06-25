@@ -52,11 +52,11 @@ while True:
     # quality = data[:, 0]
     angle = np.radians(data[:, 1]) # Convert angle to radians
     range = data[:, 2]
-    theta_mirrored = 1.5*np.pi - angle
+    angle = 1.5*np.pi - angle
 
     # Clear previous plot and plot Lidar data in polar projection
     ax.clear()
-    ax.scatter(theta_mirrored, range, s=5, cmap=plt.cm.Greys_r, lw=0)
+    ax.scatter(angle, range, s=5, cmap=plt.cm.Greys_r, lw=0)
     ax.set_rmax(DMAX)
     ax.grid(True)
     plt.draw()

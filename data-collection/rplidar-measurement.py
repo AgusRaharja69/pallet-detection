@@ -15,13 +15,11 @@ def run():
     lidar = RPLidar(PORT_NAME, baudrate=BAUDRATE, timeout=3)
     try:
         for val in lidar.iter_scans(min_len=100, scan_type='normal', max_buf_meas=False):
-            for (_, angle, distance) in val:
-                print(angle)
-            # lidarData = {}
-            # lidarData["data"] = val
-            # with open('../lidarJson.json','w') as outfile :
-            #     json.dump(lidarData, outfile, indent=2)
-            #     lidarData["data"] = [0,0,0]
+            lidarData = {}
+            lidarData["data"] = val
+            with open('../lidarJson.json','w') as outfile :
+                json.dump(lidarData, outfile, indent=2)
+                lidarData["data"] = [0,0,0]
     except KeyboardInterrupt:
         lidar.stop()
         lidar.stop_motor()
