@@ -1,251 +1,122 @@
-# import cv2
-# import numpy as np
-# import json
-
-# jsonLidarPath = '../lidarJson.json'
-
-# # Calibration parameters - adjust according to your setup
-# lidar_height = 10.5  # cm
-# camera_height = 14.5  # cm
-# image_width = 640
-# image_height = 480
-
-# fx = float(1570.34678)
-# fy = float(1498.80818)
-# cx = float(375.793671)
-# cy = float(365.519559)
-
-# camera_matrix = np.matrix(
-#                 [[fx, 0.0, cx],
-#                 [0.0, fy, cy],
-#                 [0.0, 0.0, 1.0]])
-
-# camera_to_lidar = np.matrix(
-#             [[ 0.93358714, -0.02131085, 0.35771622, 0.68452038],
-#             [-0.01127525, 0.995989, 0.08876254, -3.47740999],
-#             [-0.35817302, -0.0869009, 0.92960224, 0.57624013],
-#             [ 0.0, 0.0, 0.0, 1.0]])
-
-# # Capture and calibrate the camera
-# cap = cv2.VideoCapture(1)
-
-# while True:
-#     # Capture frame from webcam
-#     ret, frame = cap.read()
-
-#     # Lidar points in polar coordinates
-#     with open(jsonLidarPath) as f:
-#         try :
-#             lidar_data = json.load(f)
-#         except:
-#             lidar_data = {"data": [[0,0,0]]}
-
-#     # LiDAR data
-#     dataLidar = np.array(lidar_data['data'])
-#     angleRawLidar = np.radians(dataLidar[:, 1]) # Convert angle to radians
-#     distance = dataLidar[:, 2] #lidar distance
-#     angle = np.pi - angleRawLidar #lidar angle
-
-#     # Convert polar coordinates to 3D cartesian coordinates in lidar frame
-#     x = distance * np.sin(angle)
-#     y = -distance * np.cos(angle)
-#     z = np.zeros_like(x)
-#     lidar_pos = np.column_stack([x, y, z, np.ones_like(distance)])
-
-#     # Transform lidar points to camera frame
-#     camera_pos = np.dot(camera_to_lidar, lidar_pos.T).T
-
-#     # Remove homogeneous coordinate
-#     camera_pos = camera_pos[:, :3] / camera_pos[:, 3:]
-
-#     # Project camera 3D points to 2D image plane
-#     pixel_pos = np.dot(
-#         camera_matrix, 
-#         np.dot(camera_to_lidar[:3,:3], 
-#                np.vstack((distance * np.cos(angle), 
-#                           -distance * np.sin(angle), 
-#                           np.zeros_like(distance), 
-#                           np.ones_like(distance)))))
-
-#     # Extract x and y coordinates from pixel_pos
-#     x, y = (pixel_pos[:-1, :]/pixel_pos[-1:, :]).T
-
-#     # Create a list of points to draw contours
-#     pts = np.array([(x[i], y[i]) for i in range(len(distance))], dtype=np.int32)
-
-#     # Draw contours on the frame
-#     cv2.drawContours(frame, [pts], 0, (0, 0, 255), 2)
-
-#     # Display the resulting frame
-#     cv2.imshow('frame', frame)
-
-#     # Exit the program on 'q' key press
-#     if cv2.waitKey(1) & 0xFF == ord('q'):
-#         break
-
-# # Release the webcam and close all windows
-# cap.release()
-# cv2.destroyAllWindows()
-
-#######################################
-# import numpy as np
-
-# # Camera matrix
-# camera_matrix = np.array([[1.57034678e+03, 0.00000000e+00, 3.75793671e+02],
-#                           [0.00000000e+00, 1.49880818e+03, 3.65519559e+02],
-#                           [0.00000000e+00, 0.00000000e+00, 1.00000000e+00]])
-
-# # Camera to lidar transform
-# camera_to_lidar = np.array([[0.93358714, -0.02131085, 0.35771622, 0.68452038],
-#                             [-0.01127525, 0.995989, 0.08876254, -3.47740999],
-#                             [-0.35817302, -0.0869009, 0.92960224, 0.57624013],
-#                             [0., 0., 0., 1.]])
-
-# # Lidar point in polar coordinates
-# distance = 10  # meters
-# angle = 45  # degrees
-
-# # Convert polar coordinates to 3D cartesian coordinates in lidar frame
-# x = distance * np.sin(np.radians(angle))
-# y = -distance * np.cos(np.radians(angle))
-# z = 0
-# lidar_pos = np.array([x, y, z, 1])
-
-# # Transform lidar point to camera frame
-# camera_pos = np.dot(camera_to_lidar, lidar_pos)
-
-# # Remove homogeneous coordinate
-# camera_pos = camera_pos / camera_pos[3]
-
-# # Project camera 3D point to 2D image plane
-# pixel_pos = np.dot(camera_matrix, camera_pos[:3])
-
-# # Normalize pixel_pos to get the (x, y) coordinates of the pixel
-# x, y = pixel_pos[:2] / pixel_pos[2]
-
-# # Print results
-# print("Lidar point in polar coordinates:", (distance, angle))
-# print("Lidar point in cartesian coordinates (lidar frame):", (x, y, z))
-# print("Lidar point in cartesian coordinates (camera frame):", tuple(camera_pos[:3]))
-# print("Pixel coordinates:", (x, y))
-
-##########################
 import cv2
 import numpy as np
 import json
+import yaml
 
-jsonLidarPath = '../lidarJson.json'
+def get_z(T_cam_world, T_world_pc, K):
+    R = T_cam_world[:3, :3]
+    t = T_cam_world[:3, 3]
+    proj_mat = np.dot(K, np.hstack((R, t[:, np.newaxis])))
+    xyz_hom = np.hstack((T_world_pc, np.ones((T_world_pc.shape[0], 1))))
+    xy_hom = np.dot(proj_mat, xyz_hom.T).T
+    z = xy_hom[:, -1]
+    z = np.asarray(z).squeeze()
+    return z
 
-# Calibration parameters - adjust according to your setup
-lidar_height = 10.5  # cm
-camera_height = 14.5  # cm
-image_width = 640
-image_height = 480
+def extract(point):
+    return [point[0], point[1], point[2]]
 
-# Calibration data chessboard
-# fx = float(437.81464946)
-# fy = float(421.31344926)
-# cx = float(250.51843603)
-# cy = float(242.87899323)
+def callback(image):
+    img = image['data']
 
-# r00 = float(0.99216097)
-# r01 = float(-0.00893324)
-# r02 = float(-0.1246467)
-# r10 = float(0.00491244)
-# r11 = float(0.99945876)
-# r12 = float(-0.03252774)
-# r20 = float(0.12486981)
-# r21 = float(0.03166044)
-# r22 = float(0.99166786)
-
-# t0 = float(-0.18843171)
-# t1 = float(3.81156829)
-# t2 = float(0.99166786)
-
-# Based on point Lidar to camera
-fx = float(6826.66667)
-fy = float(6826.66667)
-cx = float(320)
-cy = float(240)
-
-r00 = float(1)
-r01 = float(0)
-r02 = float(0)
-r10 = float(0)
-r11 = float(1)
-r12 = float(0)
-r20 = float(0)
-r21 = float(0)
-r22 = float(1)
-
-t0 = float(0)
-t1 = float(4)
-t2 = float(0)
-
-# Calibration data obtained from the previous code
-camera_matrix = np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1]])
-rotation_matrix = np.array([[r00, r01, r02], [r10, r11, r12], [r20, r21, r22]])
-translation_vector = np.array([t0, t1, t2])
-
-# Calculate camera-to-lidar transformation matrix
-rotation_matrix_inv = np.linalg.inv(rotation_matrix)
-translation_vector_inv = -rotation_matrix_inv.dot(translation_vector)
-extrinsic_matrix_inv = np.concatenate((rotation_matrix_inv, translation_vector_inv.reshape(3, 1)), axis=1)
-extrinsic_matrix_inv = np.vstack((extrinsic_matrix_inv, np.array([0, 0, 0, 1])))
-
-# Create VideoCapture object
-cap = cv2.VideoCapture(1)  # Adjust camera index if needed
-
-while True:
-    # Read frame from the camera
-    ret, frame = cap.read()
-    
-    # Lidar data
-    # Lidar points in polar coordinates
+    # Load LiDAR data from lidarJson.json
+    jsonLidarPath = "../lidarJson.json"  # Replace with the actual path to your LiDAR JSON file
     with open(jsonLidarPath) as f:
-        try :
+        try:
             lidar_data = json.load(f)
         except:
-            lidar_data = {"data": [[0,0,0]]}
+            lidar_data = {"data": [[0, 0, 0]]}
 
     # LiDAR data
     dataLidar = np.array(lidar_data['data'])
-    lidar_angles = np.radians(dataLidar[:, 1]-90) # Convert angle to radians
-    lidar_distances = dataLidar[:, 2] #lidar distance
-    # lidar_angles = 0.5*np.pi - lidar_angles #lidar angle
+    lidar_angles = np.radians(dataLidar[:, 1])  # Convert angle to radians
+    lidar_distances = dataLidar[:, 2]  # Lidar distance
+    lidar_angles = 1.5*np.pi - lidar_angles
 
     # Project lidar data into camera frame
     lidar_points = np.zeros((len(lidar_distances), 3))
     for i in range(len(lidar_distances)):
-        distance = lidar_distances[i]/100
+        distance = lidar_distances[i] / 10
         angle = lidar_angles[i]
 
         x = distance * np.cos(angle)
         y = distance * np.sin(angle)
-        z = lidar_height
+        z = 10.5 # lidar height 10.5 cm from ground
 
         lidar_points[i] = [x, y, z]
 
-    lidar_points_homogeneous = np.hstack((lidar_points, np.ones((len(lidar_points), 1))))
-    camera_points_homogeneous = extrinsic_matrix_inv.dot(lidar_points_homogeneous.T).T
+    Z = get_z(q, lidar_points, K)
+    lidar_points = lidar_points[Z > 0]
+    if lens == 'pinhole':
+        img_points, _ = cv2.projectPoints(lidar_points, rvec, tvec, K, D)
+    elif lens == 'fisheye':
+        lidar_points = np.reshape(lidar_points, (1, lidar_points.shape[0], lidar_points.shape[1]))
+        img_points, _ = cv2.fisheye.projectPoints(lidar_points, rvec, tvec, K, D)
+    img_points = np.squeeze(img_points)
+    for i in range(len(img_points)):
+        try:
+            cv2.circle(img, (int(round(img_points[i][0])), int(round(img_points[i][1]))), laser_point_radius, (0, 255, 0), 1)
+        except OverflowError:
+            continue
+    cv2.imshow("Reprojection", img)
+    cv2.waitKey(1)
 
-    # Convert camera points to image coordinates
-    camera_points = camera_points_homogeneous[:, :3] / camera_points_homogeneous[:, 3, np.newaxis]
-    image_points, _ = cv2.projectPoints(camera_points, np.zeros((3,)), np.zeros((3,)), camera_matrix, None)
+# Replace with the actual calibration file path
+calib_file = "result.txt"
+# Replace with the actual config file path
+config_file = "config.yaml"
+# Replace with the desired laser point radius
+laser_point_radius = 1
 
-    print(image_points)
-    # Display projected lidar points on the camera image
-    for point in image_points:
-        x, y = point.ravel()
-        cv2.circle(frame, (int(x), int(y)), 1, (0, 0, 255), -1)
+# Load camera-to-laser calibration parameters
+with open(calib_file, 'r') as f:
+    data = f.readline().split()
+    qx, qy, qz, qw, tx, ty, tz = map(float, data)
+q = np.array([[qw, -qz, qy, tx],
+              [qz, qw, -qx, ty],
+              [-qy, qx, qw, tz],
+              [0, 0, 0, 1]])
+print("Extrinsic parameter - camera to laser")
+print(q)
+tvec = q[:3, 3]
+rot_mat = q[:3, :3]
+rvec, _ = cv2.Rodrigues(rot_mat)
 
-    # Show the frame with projected lidar points
-    cv2.imshow('Projected Lidar Points', frame)
-    
-    # Break the loop if 'q' is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+# Load camera parameters from config file
+with open(config_file, 'r') as f:
+    config = yaml.load(f, Loader=yaml.SafeLoader)
+    lens = config['lens']
+    fx = float(config['fx'])
+    fy = float(config['fy'])
+    cx = float(config['cx'])
+    cy = float(config['cy'])
+    k1 = float(config['k1'])
+    k2 = float(config['k2'])
+    p1 = float(config['p1/k3'])
+    p2 = float(config['p2/k4'])
+
+K = np.array([[fx, 0.0, cx],
+              [0.0, fy, cy],
+              [0.0, 0.0, 1.0]])
+D = np.array([k1, k2, p1, p2])
+print("Camera parameters")
+print("Lens =", lens)
+print("K =")
+print(K)
+print("D =")
+print(D)
+
+# OpenCV VideoCapture for webcam
+cap = cv2.VideoCapture(1)  # Replace with the appropriate webcam index if not the default
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
         break
+    image = {
+        'data': frame,
+    }
+    callback(image)
 
-# Release the VideoCapture object and close any open windows
 cap.release()
 cv2.destroyAllWindows()

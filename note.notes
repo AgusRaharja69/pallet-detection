@@ -1,17 +1,7 @@
 TASK THESIS:
 1.  Method 1, Record data
 2.  Method 2, Record data
-3.  Method 3, Point cloud, setting posisi camera dengan point cloud LiDAR, Record Data
-    ///////
-    The overlap between a 2D lidar and an RGB image would be a line of pixels.
-
-    If you have a feature detection in the RGB image that corresponds with that overlap, k
-    then yes, its presumably possible to use the LIDAR information to fuse or 
-    register the detection with the pointcloud or scan.
-
-    if the goal is just camera calibration,
-    there are usually ways that don't involve direct depth measurement
-    (such as printing out a checkerboard)
+3.  Method 3, Edit Code, Record Data
 
 Command training model :
 py train.py --img 320 --batch 8 --epochs 50 --data data.yaml --device 0 --weights yolov5n.pt
@@ -61,77 +51,7 @@ LiDAR real world potition:
 h_LiDAR = 10.5 cm
 h_camera = 14.5 cm
 
-########## 21/06/23 ##########
-kalibrasi :
-
-D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration>py camera_calli_img.py
-total error: 0.02285955187370706
- Camera matrix:
-[[1.51524349e+03 0.00000000e+00 3.65908321e+02]
- [0.00000000e+00 1.44932731e+03 3.27483973e+02]
- [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
-
- Distortion coefficient:
-[[-2.32701187e-01  1.12870600e+01  2.71129011e-03  1.70226889e-02
-  -1.00357243e+02]]
-
- Rotation Vector:
-[array([[ 0.08974448],
-       [-0.34889318],
-       [-0.00065488]]), array([[ 0.08929608],
-       [-0.3495648 ],
-       [-0.00070519]]), array([[ 0.08961902],
-       [-0.34925312],
-       [-0.00067873]])]
-
- Rotation Matrix:
-[array([[ 0.93979196, -0.01484622, -0.34142446],
-       [-0.01612784,  0.99601612, -0.08770284],
-       [ 0.34136632,  0.08792886,  0.9358085 ]]), array([[ 0.93956187, -0.01474883, -0.34206135],
-       [-0.0161288 ,  0.99605592, -0.08724945],
-       [ 0.34199906,  0.0874933 ,  0.93561828]]), array([[ 0.93966881, -0.01481693, -0.34176453],
-       [-0.01614516,  0.99602731, -0.08757246],
-       [ 0.34170436,  0.08780695,  0.93569657]])]
-
- Translation Vectors:
-[array([[-291.71344798],
-       [-390.74731084],
-       [2236.65797545]]), array([[-291.62871742],
-       [-390.67142717],
-       [2236.02927475]]), array([[-291.66729163],
-       [-390.67521205],
-       [2236.19909371]])]
-
-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
-
-D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration\calli_dfov>py camera_calii_dfov.py
- Camera matrix:
-[[521.72737903   0.         255.7938803 ]
- [  0.         499.4948742  244.34969476]
- [  0.           0.           1.        ]]
-
- Distortion coefficient:
-[[-0.51126399  1.97807254 -0.06445     0.01816105 -3.60575746]]
-
- Rotation Vectors:
-[array([[ 0.98869398, -0.00655296, -0.14980409],
-       [ 0.00221329,  0.99957355, -0.02911737],
-       [ 0.14993101,  0.02845661,  0.98828686]]), array([[ 0.98843084, -0.00636175, -0.15153876],
-       [ 0.00222148,  0.99962002, -0.0274752 ],
-       [ 0.15165597,  0.02682069,  0.98806939]]), array([[ 0.98865173, -0.00654364, -0.15008309],
-       [ 0.00236245,  0.99960455, -0.02802058],
-       [ 0.1502071 ,  0.02734803,  0.98827623]])]
-
- Translation Vectors:
-[array([[-2.02784433],
-       [-4.01880505],
-       [12.10935136]]), array([[-2.02690942],
-       [-4.01881167],
-       [12.10776663]]), array([[-2.02775131],
-       [-4.02004806],
-       [12.11516881]])]
-
+#########################################################################
 D:\TESIS\THESIS_3\program\pallet-detection\data-collection\camera-callibration>py test_fusion.py
 camera_matrix:  [[1.57034678e+03 0.00000000e+00 3.75793671e+02]
  [0.00000000e+00 1.49880818e+03 3.65519559e+02]
@@ -158,10 +78,7 @@ camera_to_lidar:  [[ 0.93358714 -0.02131085  0.35771622  0.68452038]
  [-0.35817302 -0.0869009   0.92960224  0.57624013]
  [ 0.          0.          0.          1.        ]]
 
-
-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
-
+ #########################################################################
 D:\TESIS\THESIS_3\program\pallet-detection\data-collection>py callibration-camera.py
 camera_matrix:  [[502.56912538   0.         371.18295742]
  [  0.         518.77865677 123.60822693]
@@ -179,34 +96,12 @@ camera_to_lidar:  [[ 0.98450658  0.02700893  0.17325505  0.45825861]
  [-0.17268519 -0.022187    0.98472715  0.46628134]
  [ 0.          0.          0.          1.        ]]
 
- #########################################################################
-
+ - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
  D:\TESIS\THESIS_3\program\pallet-detection\data-collection>py callibration-camera.py
 camera_matrix:  [[437.81464946   0.         250.51843603]
  [  0.         421.31344926 242.87899323]
  [  0.           0.           1.        ]]
-rvecs:  [array([[ 0.03218379],
-       [-0.12510692],
-       [ 0.00694219]]), array([[ 0.0339637 ],
-       [-0.12636521],
-       [ 0.00695457]]), array([[ 0.19695449],
-       [ 0.05578015],
-       [-3.12794708]]), array([[ 0.03537758],
-       [-0.12708215],
-       [ 0.00673974]]), array([[ 0.03510831],
-       [-0.12647413],
-       [ 0.00676865]])]
-tvecs:  [array([[-1.88431708],
-       [-3.98587403],
-       [10.16658168]]), array([[-1.88354545],
-       [-3.98531132],
-       [10.16492199]]), array([[ 4.03196567],
-       [ 0.04094024],
-       [11.05465452]]), array([[-1.88257905],
-       [-3.98416536],
-       [10.15913529]]), array([[-1.88342074],
-       [-3.98439278],
-       [10.16006188]])]
+
 dist:  [[-0.39328142  1.14971779 -0.05502625  0.01450477 -1.59749278]]
 
 rotation_matrix:  [[ 0.99216097 -0.00893324 -0.1246467 ]
@@ -219,23 +114,188 @@ extrinsic_matrix:  [[ 0.99216097 -0.00893324 -0.1246467  -0.18843171]
  [ 0.00491244  0.99945876 -0.03252774  3.81156829]
  [ 0.12486981  0.03166044  0.99166786 -0.18843171]
  [ 0.          0.          0.          1.        ]]
+
 camera_to_lidar:  [[ 0.99216097  0.00491244  0.12486981  0.19175992]
  [-0.00893324  0.99945876  0.03166044 -3.8052228 ]
  [-0.1246467  -0.03252774  0.99166786  0.28735599]
  [ 0.          0.          0.          1.        ]]
 
-
-#####################################################
-#####################################################
- Estimated camera_matrix:
-[[6.82666667e+03 0.00000000e+00 3.20000000e+02]
- [0.00000000e+00 6.82666667e+03 2.40000000e+02]
+ - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
+D:\TESIS\THESIS_3\program\pallet-detection\data-collection>py calibration-camera.py
+camera_matrix:  [[1.86091182e+03 0.00000000e+00 3.93702380e+02]
+ [0.00000000e+00 1.84606954e+03 4.09530228e+02]
  [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
 
-Estimated rotation_matrix:
-[[1. 0. 0.]
- [0. 1. 0.]
- [0. 0. 1.]]
+dist:  [[-3.12480991e+00  1.20483327e+02  7.63097732e-03 -5.64181108e-03
+  -1.42623193e+03]]
 
-Estimated translation_vector:
-[0. 4. 0.]
+rotation_matrix:  [[ 0.9971224  -0.02865836 -0.07018272]
+ [ 0.01826659  0.98934144 -0.14446401]
+ [ 0.07357478  0.1427663   0.987018  ]]
+
+translation_vector:  [-0.48266557  3.51733443 -0.48266557]
+
+extrinsic_matrix:  [[ 0.9971224  -0.02865836 -0.07018272 -0.48266557]
+ [ 0.01826659  0.98934144 -0.14446401  3.51733443]
+ [ 0.07357478  0.1427663   0.987018   -0.48266557]
+ [ 0.          0.          0.          1.        ]]
+
+camera_to_lidar:  [[ 0.9971224   0.01826659  0.07357478  0.45253898]
+ [-0.02865836  0.98934144  0.1427663  -3.42476872]
+ [-0.07018272 -0.14446401  0.987018    0.95065307]
+ [ 0.          0.          0.          1.        ]]
+
+ - !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
+D:\TESIS\THESIS_3\program\pallet-detection\data-collection>py calibration-camera.py
+Camera parameters
+Lens = pinhole
+K =
+[[1.86091182e+03 0.00000000e+00 3.93702380e+02]
+ [0.00000000e+00 1.84606954e+03 4.09530228e+02]
+ [0.00000000e+00 0.00000000e+00 1.00000000e+00]]
+D =
+[-3.12480991e+00  1.20483327e+02  7.63097732e-03 -5.64181108e-03]
+Transform from camera to laser
+T =
+[[-4.86069745]
+ [-7.98533984]
+ [43.65714024]]
+R =
+[[ 0.99970798 -0.02403403 -0.0025132 ]
+ [ 0.02402181  0.99969998 -0.00478546]
+ [ 0.00262746  0.00472369  0.99998539]]
+RMSE in pixel = 10.89423783140845
+Result output format: qx qy qz qw tx ty tz
+
+
+###################### error #########################
+###################### error #########################
+import cv2
+import numpy as np
+import json
+
+jsonLidarPath = '../lidarJson.json'
+
+# Calibration parameters - adjust according to your setup
+lidar_height = 10.5  # cm
+camera_height = 14.5  # cm
+image_width = 640
+image_height = 480
+
+fx = float(1570.34678)
+fy = float(1498.80818)
+cx = float(375.793671)
+cy = float(365.519559)
+
+camera_matrix = np.matrix(
+                [[fx, 0.0, cx],
+                [0.0, fy, cy],
+                [0.0, 0.0, 1.0]])
+
+camera_to_lidar = np.matrix(
+            [[ 0.93358714, -0.02131085, 0.35771622, 0.68452038],
+            [-0.01127525, 0.995989, 0.08876254, -3.47740999],
+            [-0.35817302, -0.0869009, 0.92960224, 0.57624013],
+            [ 0.0, 0.0, 0.0, 1.0]])
+
+# Capture and calibrate the camera
+cap = cv2.VideoCapture(1)
+
+while True:
+    # Capture frame from webcam
+    ret, frame = cap.read()
+
+    # Lidar points in polar coordinates
+    with open(jsonLidarPath) as f:
+        try :
+            lidar_data = json.load(f)
+        except:
+            lidar_data = {"data": [[0,0,0]]}
+
+    # LiDAR data
+    dataLidar = np.array(lidar_data['data'])
+    angleRawLidar = np.radians(dataLidar[:, 1]) # Convert angle to radians
+    distance = dataLidar[:, 2] #lidar distance
+    angle = np.pi - angleRawLidar #lidar angle
+
+    # Convert polar coordinates to 3D cartesian coordinates in lidar frame
+    x = distance * np.sin(angle)
+    y = -distance * np.cos(angle)
+    z = np.zeros_like(x)
+    lidar_pos = np.column_stack([x, y, z, np.ones_like(distance)])
+
+    # Transform lidar points to camera frame
+    camera_pos = np.dot(camera_to_lidar, lidar_pos.T).T
+
+    # Remove homogeneous coordinate
+    camera_pos = camera_pos[:, :3] / camera_pos[:, 3:]
+
+    # Project camera 3D points to 2D image plane
+    pixel_pos = np.dot(
+        camera_matrix, 
+        np.dot(camera_to_lidar[:3,:3], 
+               np.vstack((distance * np.cos(angle), 
+                          -distance * np.sin(angle), 
+                          np.zeros_like(distance), 
+                          np.ones_like(distance)))))
+
+    # Extract x and y coordinates from pixel_pos
+    x, y = (pixel_pos[:-1, :]/pixel_pos[-1:, :]).T
+
+    # Create a list of points to draw contours
+    pts = np.array([(x[i], y[i]) for i in range(len(distance))], dtype=np.int32)
+
+    # Draw contours on the frame
+    cv2.drawContours(frame, [pts], 1, (0, 0, 255), 1)
+
+    # Display the resulting frame
+    cv2.imshow('frame', frame)
+
+    # Exit the program on 'q' key press
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# Release the webcam and close all windows
+cap.release()
+cv2.destroyAllWindows()
+
+
+# ############################
+fx = float(1860.91182)
+fy = float(1846.06954)
+cx = float(393.70238)
+cy = float(409.530228)
+
+r00 = float(0.9971224)
+r01 = float(-0.02865836)
+r02 = float(-0.07018272)
+r10 = float(0.01826659)
+r11 = float(0.98934144)
+r12 = float(-0.14446401)
+r20 = float(0.07357478)
+r21 = float(0.1427663)
+r22 = float(0.987018)
+
+t0 = float(-0.48266557)
+t1 = float(3.51733443)
+t2 = float(-0.48266557)
+
+# ###########################
+# fx = float(1860.91182)
+# fy = float(1846.06954)
+# cx = float(393.70238)
+# cy = float(409.530228)
+
+# r00 = float(0.99970798)
+# r01 = float(-0.02403403)
+# r02 = float(-0.0025132)
+# r10 = float(0.02402181)
+# r11 = float(0.99969998)
+# r12 = float(-0.00478546)
+# r20 = float(0.00262746)
+# r21 = float(0.00472369)
+# r22 = float(0.99998539)
+
+# t0 = float(-4.86069745)
+# t1 = float(-7.98533984)
+# t2 = float(43.65714024)

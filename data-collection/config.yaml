@@ -1,46 +1,9 @@
-cx: !!python/object/apply:numpy.core.multiarray.scalar
-- &id001 !!python/object/apply:numpy.dtype
-  args:
-  - f8
-  - false
-  - true
-  state: !!python/tuple
-  - 3
-  - <
-  - null
-  - null
-  - null
-  - -1
-  - -1
-  - 0
-- !!binary |
-  cqET+hALdEA=
-cy: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  hD74TtZ9aEA=
-fx: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  jetblPC6l0A=
-fy: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  kvE7SgnIl0A=
-k1: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  6ko2WO/h8D8=
-k2: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  N6KlGId9bUA=
+cx: 393.7023804355801
+cy: 409.53022750248056
+fx: 1860.9118161262147
+fy: 1846.0695381894068
+k1: -3.1248099081656666
+k2: 120.48332651392097
 lens: pinhole
-p1/k3: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  gzzLqB8ynT8=
-p2/k4: !!python/object/apply:numpy.core.multiarray.scalar
-- *id001
-- !!binary |
-  z0r3mlMWiT8=
+p1/k3: 0.00763097731616083
+p2/k4: -0.0056418110793518194
