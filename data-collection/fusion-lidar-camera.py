@@ -53,9 +53,15 @@ def callback(image):
         lidar_points = np.reshape(lidar_points, (1, lidar_points.shape[0], lidar_points.shape[1]))
         img_points, _ = cv2.fisheye.projectPoints(lidar_points, rvec, tvec, K, D)
     img_points = np.squeeze(img_points)
+    
+    # Mirror lidar points vertically
+    img_height = img.shape[0]
+    img_points[:, 1] = img_height - img_points[:, 1]
+
+    # Draw circles on the image at the locations of the projected lidar points
     for i in range(len(img_points)):
         try:
-            cv2.circle(img, (int(round(img_points[i][0])), int(round(img_points[i][1]))), laser_point_radius, (0, 255, 0), 1)
+            cv2.circle(img, (int(round(img_points[i][0])), int(round(img_points[i][1]))), laser_point_radius, (0, 0, 255), 1)
         except OverflowError:
             continue
     cv2.imshow("Reprojection", img)
