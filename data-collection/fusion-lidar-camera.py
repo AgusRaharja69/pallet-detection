@@ -16,6 +16,39 @@ def get_z(T_cam_world, T_world_pc, K):
 def extract(point):
     return [point[0], point[1], point[2]]
 
+def get_proj():
+    jsonLidarPath = "../lidarJson.json"  # Replace with the actual path to your LiDAR JSON file
+    with open(jsonLidarPath) as f:
+        try:
+            lidar_data = json.load(f)
+        except:
+            lidar_data = {"data": [[0, 0, 0]]}
+    
+    # LiDAR data
+    dataLidar = np.array(lidar_data['data'])
+    lidar_angles = np.radians(dataLidar[:, 1])  # Convert angle to radians
+    lidar_distances = dataLidar[:, 2]  # Lidar distance
+    lidar_angles = 1.5*np.pi - lidar_angles
+
+    # Project lidar data into camera frame
+    lidar_points = np.zeros((len(lidar_distances), 3))
+    for i in range(len(lidar_distances)):
+        distance = lidar_distances[i] / 10
+        angle = lidar_angles[i]
+
+        x = distance * np.cos(angle)
+        y = distance * np.sin(angle)
+        z = 10.5 # lidar height 10.5 cm from ground
+
+        lidar_points[i] = [x, y, z]
+
+    Z = get_z(q, lidar_points, K)
+    lidar_points = lidar_points[Z > 0]
+    img_points, _ = cv2.projectPoints(lidar_points, rvec, tvec, K, D)
+    img_points = np.squeeze(img_points)
+
+    img_height = 480
+
 def callback(image):
     img = image['data']
 
@@ -56,12 +89,31 @@ def callback(image):
     
     # Mirror lidar points vertically
     img_height = img.shape[0]
-    img_points[:, 1] = img_height - img_points[:, 1]
+    try:
+        img_points[:, 1] = img_height - img_points[:, 1]
+    except:
+        # Reshape the img_points array to have two dimensions
+        img_points[1] = img_height - img_points[1]
+        img_points = [img_points]
+
+    # Get the current image width
+    img_width = 560
+
+    # Calculate the desired center x-coordinate
+    center_x_desired = 320
+
+    # Calculate the scaling factor based on the difference between the current and desired center x-coordinates
+    scaling_factor = abs(center_x_desired - img_width // 2) / float(img_width // 2)
+
+    # Scale the x-coordinates of img_points
+    img_points[:, 0] = img_points[:, 0] * (1.0 - scaling_factor) + center_x_desired * scaling_factor
 
     # Draw circles on the image at the locations of the projected lidar points
     for i in range(len(img_points)):
         try:
-            cv2.circle(img, (int(round(img_points[i][0])), int(round(img_points[i][1]))), laser_point_radius, (0, 0, 255), 1)
+            center_x = int(round(img_points[i][0]))
+            center_y = int(round(img_points[i][1]))
+            cv2.circle(img, (center_x, center_y), laser_point_radius, (0, 0, 255), 2)
         except OverflowError:
             continue
     cv2.imshow("Reprojection", img)
@@ -114,7 +166,8 @@ print(D)
 
 # OpenCV VideoCapture for webcam
 cap = cv2.VideoCapture(1)  # Replace with the appropriate webcam index if not the default
-
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 while True:
     ret, frame = cap.read()
     if not ret:

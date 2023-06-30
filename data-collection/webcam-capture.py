@@ -3,18 +3,20 @@ from pathlib import Path
 
 key = cv2. waitKey(1)
 webcam = cv2.VideoCapture(1)
+webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 while True:
     try:
         check, frame = webcam.read()
         # print(check) #prints true as long as the webcam is running
         # print(frame) #prints matrix values of each framecd 
-        cv2.circle(frame,(320,240), 5, (0,255,255), -1)
+        # cv2.circle(frame,(320,240), 5, (0,255,255), -1)
         
         cv2.imshow("Capturing", frame)
         
         key = cv2.waitKey(1)
         if key == ord('s'):
-            nb_files = len(list(Path(".").glob("saved_img_*.jpg")))
+            nb_files = len(list(Path("exp-data/images").glob("saved_img_*.jpg")))
             cv2.imwrite(filename=f"saved_img_{nb_files}.jpg", img=frame)
             # webcam.release()
             img_new = cv2.imread(f"saved_img_{nb_files}.jpg", cv2.IMREAD_GRAYSCALE)
