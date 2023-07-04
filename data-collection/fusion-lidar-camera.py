@@ -94,10 +94,10 @@ def callback(image):
     except:
         # Reshape the img_points array to have two dimensions
         img_points[1] = img_height - img_points[1]
-        img_points = [img_points]
+        img_points = np.array([img_points])
 
     # Get the current image width
-    img_width = 560
+    img_width = 500
 
     # Calculate the desired center x-coordinate
     center_x_desired = 320

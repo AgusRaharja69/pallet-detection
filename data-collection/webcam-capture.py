@@ -5,6 +5,8 @@ key = cv2. waitKey(1)
 webcam = cv2.VideoCapture(1)
 webcam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 webcam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+save_path = Path("exp-data/images")
+
 while True:
     try:
         check, frame = webcam.read()
@@ -16,10 +18,11 @@ while True:
         
         key = cv2.waitKey(1)
         if key == ord('s'):
-            nb_files = len(list(Path("exp-data/images").glob("saved_img_*.jpg")))
-            cv2.imwrite(filename=f"saved_img_{nb_files}.jpg", img=frame)
+            nb_files = len(list(save_path.glob("img_*.jpg")))+1
+            filename = save_path / f"img_{nb_files}.jpg"
+            cv2.imwrite(str(filename), frame)
             # webcam.release()
-            img_new = cv2.imread(f"saved_img_{nb_files}.jpg", cv2.IMREAD_GRAYSCALE)
+            img_new = cv2.imread(str(filename), cv2.IMREAD_GRAYSCALE)
             
             img_new = cv2.imshow("Captured Image", img_new)
             cv2.waitKey(1650)

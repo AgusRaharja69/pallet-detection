@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 
-jsonLidarPath = '../lidarJson.json'
-DMAX: int = 2000
+jsonLidarPath = 'exp-data/lidar/data_18.json'
+DMAX: int = 3000
 IMIN: int = 0
 IMAX: int = 50
 
